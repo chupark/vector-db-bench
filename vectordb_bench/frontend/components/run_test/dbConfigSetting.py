@@ -37,7 +37,6 @@ def dbConfigSettingItem(st, activeDb):
         unsafe_allow_html=True,
     )
     columns = st.columns(DB_CONFIG_SETTING_COLUMNS)
-
     dbConfigClass = activeDb.config_cls
     properties = dbConfigClass.schema().get("properties")
     propertiesItems = list(properties.items())

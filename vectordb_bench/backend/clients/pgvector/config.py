@@ -9,6 +9,7 @@ class PgVectorConfig(DBConfig):
     host: str = "localhost"
     port: int = 5432
     db_name: str
+    # indexing = ""
 
     def to_dict(self) -> dict:
         user_str = self.user_name.get_secret_value()

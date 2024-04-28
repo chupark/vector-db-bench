@@ -11,6 +11,7 @@ import psycopg2.extras
 from ..api import VectorDB, DBCaseConfig
 
 log = logging.getLogger(__name__) 
+schema = "pcw_test"
 
 class PgVector(VectorDB):
     """ Use SQLAlchemy instructions"""
@@ -40,6 +41,7 @@ class PgVector(VectorDB):
         
         # create vector extension
         self.cursor.execute('CREATE EXTENSION IF NOT EXISTS vector')
+        self.cursor.execute('set search_path = "$user", public, cdb_admin, pcw_test;')
         self.conn.commit()
         
         if drop_old :
@@ -79,7 +81,7 @@ class PgVector(VectorDB):
         assert self.conn is not None, "Connection is not initialized"
         assert self.cursor is not None, "Cursor is not initialized"
         
-        self.cursor.execute(f'DROP TABLE IF EXISTS public."{self.table_name}"')
+        self.cursor.execute(f'DROP TABLE IF EXISTS {schema}."{self.table_name}"')
         self.conn.commit()
     
     def ready_to_load(self):
@@ -108,7 +110,7 @@ class PgVector(VectorDB):
         assert self.cursor is not None, "Cursor is not initialized"
         
         index_param = self.case_config.index_param()
-        self.cursor.execute(f'CREATE INDEX IF NOT EXISTS {self._index_name} ON public."{self.table_name}" USING ivfflat (embedding {index_param["metric"]}) WITH (lists={index_param["lists"]});')
+        self.cursor.execute(f'CREATE INDEX IF NOT EXISTS {self._index_name} ON {schema}."{self.table_name}" USING hnsw (embedding {index_param["metric"]}) WITH (m = 16, ef_construction = 64);')
         self.conn.commit()
         
     def _create_table(self, dim : int):
@@ -117,8 +119,8 @@ class PgVector(VectorDB):
         
         try:
             # create table
-            self.cursor.execute(f'CREATE TABLE IF NOT EXISTS public."{self.table_name}" (id BIGINT PRIMARY KEY, embedding vector({dim}));')
-            self.cursor.execute(f'ALTER TABLE public."{self.table_name}" ALTER COLUMN embedding SET STORAGE PLAIN;')
+            self.cursor.execute(f'CREATE TABLE IF NOT EXISTS {schema}."{self.table_name}" (id BIGINT PRIMARY KEY, embedding vector({dim}));')
+            self.cursor.execute(f'ALTER TABLE {schema}."{self.table_name}" ALTER COLUMN embedding SET STORAGE PLAIN;')
             self.conn.commit()
         except Exception as e:
             log.warning(f"Failed to create pgvector table: {self.table_name} error: {e}")
@@ -142,7 +144,7 @@ class PgVector(VectorDB):
             csv_buffer = io.StringIO()
             df.to_csv(csv_buffer, index=False, header=False)
             csv_buffer.seek(0)
-            self.cursor.copy_expert(f"COPY public.\"{self.table_name}\" FROM STDIN WITH (FORMAT CSV)", csv_buffer)
+            self.cursor.copy_expert(f"COPY {schema}.\"{self.table_name}\" FROM STDIN WITH (FORMAT CSV)", csv_buffer)
             self.conn.commit()
             
             if kwargs.get("last_batch"):
@@ -164,8 +166,8 @@ class PgVector(VectorDB):
         assert self.cursor is not None, "Cursor is not initialized"
 
         search_param =self.case_config.search_param()
-        self.cursor.execute(f'SET ivfflat.probes = {search_param["probes"]}')
-        self.cursor.execute(f"SELECT id FROM public.\"{self.table_name}\" ORDER BY embedding {search_param['metric_fun_op']} '{query}' LIMIT {k};")
+        self.cursor.execute(f'SET hnsw.probes = {search_param["probes"]}')
+        self.cursor.execute(f"SELECT id FROM {schema}.\"{self.table_name}\" ORDER BY embedding {search_param['metric_fun_op']} '{query}' LIMIT {k};")
         self.conn.commit()
         result = self.cursor.fetchall()
 

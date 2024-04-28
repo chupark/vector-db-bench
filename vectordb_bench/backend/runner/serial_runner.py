@@ -16,6 +16,9 @@ from .. import utils
 from ... import config
 from vectordb_bench.backend.dataset import DatasetManager
 
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
+
 NUM_PER_BATCH = config.NUM_PER_BATCH
 LOAD_MAX_TRY_COUNT = 10
 WAITTING_TIME = 60
@@ -44,8 +47,11 @@ class SerialInsertRunner:
                 else:
                     all_embeddings = emb_np.tolist()
                 del(emb_np)
+                # log.debug(f"batch dataset size: {len(all_embeddings)}, 4")
                 log.debug(f"batch dataset size: {len(all_embeddings)}, {len(all_metadata)}")
 
+                
+                # last_batch = self.dataset.data.size - count == 4
                 last_batch = self.dataset.data.size - count == len(all_metadata)
                 insert_count, error = self.db.insert_embeddings(
                     embeddings=all_embeddings,
@@ -54,9 +60,11 @@ class SerialInsertRunner:
                 )
                 if error is not None:
                     raise error
-
+            
+                # assert insert_count == 4
                 assert insert_count == len(all_metadata)
                 count += insert_count
+                # if count % 4 == 0:
                 if count % 100_000 == 0:
                     log.info(f"({mp.current_process().name:16}) Loaded {count} embeddings into VectorDB")
 
@@ -186,7 +194,6 @@ class SerialSearchRunner:
                         self.k,
                         self.filters,
                     )
-
                 except Exception as e:
                     log.warning(f"VectorDB search_embedding error: {e}")
                     traceback.print_exc(chain=True)

@@ -54,6 +54,7 @@ all = [
     "pinecone-client",
     "weaviate-client",
     "elasticsearch",
+    "opensearch",
     "pgvector",
     "sqlalchemy",
     "redis",
@@ -65,6 +66,7 @@ qdrant = [ "qdrant-client" ]
 pinecone = [ "pinecone-client" ]
 weaviate = [ "weaviate-client" ]
 elastic = [ "elasticsearch" ]
+opensearch = [ "opensearch" ]
 pgvector = [ "pgvector", "sqlalchemy" ]
 pgvecto_rs = [ "psycopg2" ]
 redis = [ "redis" ]

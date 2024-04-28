@@ -22,7 +22,7 @@ class Milvus(VectorDB):
         dim: int,
         db_config: dict,
         db_case_config: MilvusIndexConfig,
-        collection_name: str = "VectorDBBenchCollection",
+        collection_name: str = "bench_openai_5m_hnsw",
         drop_old: bool = False,
         name: str = "Milvus",
         **kwargs,

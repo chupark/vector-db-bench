@@ -115,6 +115,16 @@ CaseConfigParamInput_EFConstruction_ES = CaseConfigInput(
     },
 )
 
+CaseConfigParamInput_EFConstruction_OpenSearch = CaseConfigInput(
+    label=CaseConfigParamType.EFConstruction,
+    inputType=InputType.Number,
+    inputConfig={
+        "min": 8,
+        "max": 512,
+        "value": 360,
+    },
+)
+
 CaseConfigParamInput_EFConstruction_PgVectoRS = CaseConfigInput(
     label=CaseConfigParamType.EFConstruction,
     inputType=InputType.Number,
@@ -137,6 +147,16 @@ CaseConfigParamInput_M_ES = CaseConfigInput(
     },
 )
 
+CaseConfigParamInput_M_OpenSearch = CaseConfigInput(
+    label=CaseConfigParamType.M,
+    inputType=InputType.Number,
+    inputConfig={
+        "min": 4,
+        "max": 64,
+        "value": 30,
+    },
+)
+
 CaseConfigParamInput_NumCandidates_ES = CaseConfigInput(
     label=CaseConfigParamType.numCandidates,
     inputType=InputType.Number,
@@ -146,6 +166,17 @@ CaseConfigParamInput_NumCandidates_ES = CaseConfigInput(
         "value": 100,
     },
 )
+
+CaseConfigParamInput_NumCandidates_OpenSearch = CaseConfigInput(
+    label=CaseConfigParamType.numCandidates,
+    inputType=InputType.Number,
+    inputConfig={
+        "min": 1,
+        "max": 10000,
+        "value": 100,
+    },
+)
+
 
 CaseConfigParamInput_EF_Milvus = CaseConfigInput(
     label=CaseConfigParamType.EF,
@@ -470,6 +501,13 @@ ESPerformanceConfig = [
     CaseConfigParamInput_NumCandidates_ES,
 ]
 
+OpenSearchLoadingConfig = [CaseConfigParamInput_EFConstruction_OpenSearch, CaseConfigParamInput_M_OpenSearch]
+OpenSearchPerformanceConfig = [
+    CaseConfigParamInput_EFConstruction_OpenSearch,
+    CaseConfigParamInput_M_OpenSearch,
+    CaseConfigParamInput_NumCandidates_OpenSearch
+]
+
 PgVectorLoadingConfig = [CaseConfigParamInput_Lists]
 PgVectorPerformanceConfig = [CaseConfigParamInput_Lists, CaseConfigParamInput_Probes]
 
@@ -520,4 +558,8 @@ CASE_CONFIG_MAP = {
         CaseLabel.Load: PgVectoRSLoadingConfig,
         CaseLabel.Performance: PgVectoRSPerformanceConfig,
     },
+    DB.OpenSearch: {
+        CaseLabel.Load: OpenSearchLoadingConfig,
+        CaseLabel.Performance: OpenSearchPerformanceConfig,
+    }
 }

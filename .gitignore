@@ -9,3 +9,6 @@ __MACOSX
 build/
 venv/
 .idea/
+
+.venv
+.github

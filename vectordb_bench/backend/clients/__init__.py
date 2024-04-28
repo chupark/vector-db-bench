@@ -26,6 +26,7 @@ class DB(Enum):
     ZillizCloud = "ZillizCloud"
     Pinecone = "Pinecone"
     ElasticCloud = "ElasticCloud"
+    OpenSearch = "OpenSearch"
     QdrantCloud = "QdrantCloud"
     WeaviateCloud = "WeaviateCloud"
     PgVector = "PgVector"
@@ -76,6 +77,10 @@ class DB(Enum):
         if self == DB.Chroma:
             from .chroma.chroma import ChromaClient
             return ChromaClient
+        
+        if self == DB.OpenSearch:
+            from .opensearch.opensearch import OpenSearchClient
+            return OpenSearchClient
 
     @property
     def config_cls(self) -> Type[DBConfig]:
@@ -119,6 +124,10 @@ class DB(Enum):
         if self == DB.Chroma:
             from .chroma.config import ChromaConfig
             return ChromaConfig
+        
+        if self == DB.OpenSearch:
+            from .opensearch.config import OpenSearchConfig
+            return OpenSearchConfig
 
     def case_config_cls(self, index_type: IndexType | None = None) -> Type[DBCaseConfig]:
         if self == DB.Milvus:
@@ -149,8 +158,13 @@ class DB(Enum):
             from .pgvecto_rs.config import _pgvecto_rs_case_config
             return _pgvecto_rs_case_config.get(index_type)
 
+        if self == DB.OpenSearch:
+            from .opensearch.config import OpenSearchIndexConfig
+            return OpenSearchIndexConfig
+        
         # DB.Pinecone, DB.Chroma, DB.Redis
         return EmptyDBCaseConfig
+
 
 
 __all__ = [
