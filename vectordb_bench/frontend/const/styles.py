@@ -39,7 +39,7 @@ DB_TO_ICON = {
     DB.Milvus: "https://assets.zilliz.com/milvus_c30b0d1994.png",
     DB.ZillizCloud: "https://assets.zilliz.com/zilliz_5f4cc9b050.png",
     DB.ElasticCloud: "https://assets.zilliz.com/Elatic_Cloud_dad8d6a3a3.png",
-    DB.OpenSearch: "opensearch_100.png",
+    DB.OpenSearch: "https://raw.githubusercontent.com/chupark/vector-db-bench/main/opensearch_100.png",
     DB.Pinecone: "https://assets.zilliz.com/pinecone_94d8154979.png",
     DB.QdrantCloud: "https://assets.zilliz.com/qdrant_b691674fcd.png",
     DB.WeaviateCloud: "https://assets.zilliz.com/weaviate_4f6f171ebe.png",
