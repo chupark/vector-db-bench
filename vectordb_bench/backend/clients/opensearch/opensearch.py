@@ -19,7 +19,7 @@ class OpenSearchClient(VectorDB):
         dim: int,
         db_config: dict,
         db_case_config: OpenSearchIndexConfig,
-        indice: str = "bench_openai_500k_nmslib",  # must be lowercase
+        indice: str = "test_openai_500k",  # must be lowercase
         id_col_name: str = "id",
         vector_col_name: str = "vector",
         drop_old: bool = False,
